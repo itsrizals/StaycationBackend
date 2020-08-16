@@ -331,12 +331,12 @@ module.exports = {
   deteleItem: async (req, res) => {
     try {
       const { id } = req.params;
-      const item = await (await Item.findOne({ _id: id })).populated("imageId");
+      const item = await Item.findOne({ _id: id }).populate("imageId");
       for (let i = 0; i < item.imageId.length; i++) {
         Image.findOne({ _id: item.imageId[i]._id })
           .then((image) => {
             fs.unlink(path.join(`public/${image.imageUrl}`));
-            image.remove;
+            image.remove();
           })
           .catch((error) => {
             req.flash("alertMessage", `${error.message}`);
