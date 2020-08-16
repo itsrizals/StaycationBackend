@@ -1,0 +1,75 @@
+<div
+  class="tab-pane fade show active"
+  id="showFeature"
+  role="tabpanel"
+  aria-labelledby="home-tab"
+>
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4">
+          <form
+            action="/admin/bank"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                placeholder="Enter name.."
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="qty">Quantity</label>
+              <input
+                type="text"
+                class="form-control"
+                id="qty"
+                name="qty"
+                placeholder="Enter quantity.."
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="image">Image</label>
+              <input
+                type="file"
+                class="form-control"
+                id="image"
+                name="image"
+                required
+              />
+            </div>
+              <button type="submit" class="btn btn-primary float-right">Save</button>
+          </form>
+        </div>
+        <div class="col-md-8">
+          <div class="table-responsive">
+            <table
+              class="table table-bordered"
+              id="dataTable"
+              width="100%"
+              cellspacing="0"
+            >
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Image</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
