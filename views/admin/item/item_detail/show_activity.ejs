@@ -9,7 +9,7 @@
       <div class="row">
         <div class="col-md-4">
           <form
-            action="/admin/bank"
+            action="/admin/item/add/activity"
             method="POST"
             enctype="multipart/form-data"
           >
@@ -27,7 +27,7 @@
             <div class="form-group">
               <label for="type">Type</label>
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 id="type"
                 name="type"
@@ -45,9 +45,11 @@
                 required
               />
             </div>
+            <input type="hidden" value="<%= itemId %>" name="itemId" />
             <button type="submit" class="btn btn-primary float-right">
               Save
             </button>
+            <a href="/admin/item" class="btn btn-secondary float-right mr-2">Back</a>
           </form>
         </div>
         <div class="col-md-8">
@@ -67,7 +69,49 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                <% for(let i = 0; i < activity.length; i++){ %>
+                <tr>
+                  <td>
+                    <%= i +1 %>
+                  </td>
+                  <td>
+                    <%= activity[i].name %>
+                  </td>
+                  <td>
+                    <%= activity[i].type %>
+                  </td>
+                  <td>
+                    <img
+                      src="http://localhost:3000/<%= activity[i].imageUrl %>"
+                      alt="imageUrl"
+                      height="60px"
+                      width="auto"
+                    />
+                  </td>
+                  <td>
+                    <form
+                      action="/admin/item/<%= itemId %>/activity/<%= activity[i].id %>?_method=DELETE"
+                      method="POST"
+                    >
+                      <a
+                        href="javascript:void(0);"
+                        type="button"
+                        class="btn btn-warning btn-sm button-update"
+                        data-id="<%= activity[i].id %>"
+                        data-name="<%= activity[i].name %>"
+                        data-type="<%= activity[i].type %>"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <button type="submit" class="btn btn-danger btn-sm mx-1">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
             </table>
           </div>
         </div>

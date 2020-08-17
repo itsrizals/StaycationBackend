@@ -42,7 +42,7 @@ const itemSchema = new mongoose.Schema({
       ref: "Feature",
     },
   ],
-  activity: [
+  activityId: [
     {
       type: ObjectId,
       ref: "Activity",
