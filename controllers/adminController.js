@@ -5,6 +5,8 @@ const Feature = require("../models/Feature");
 const Activity = require("../models/Activity");
 const Image = require("../models/Image");
 const User = require("../models/User");
+const Booking = require("../models/Booking");
+const Member = require("../models/Member");
 const fs = require("fs-extra");
 const path = require("path");
 const bcrypt = require("bcrypt");
@@ -16,10 +18,14 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
-      res.render("index", {
-        title: "Staycation | Login",
-        alert,
-      });
+      if (req.session.user == null || req.session.user == undefined) {
+        res.render("index", {
+          title: "Staycation | Login",
+          alert,
+        });
+      } else {
+        res.redirect("/admin/dashboard");
+      }
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -30,7 +36,6 @@ module.exports = {
   actionSignin: async (req, res) => {
     try {
       const { username, password } = req.body;
-      console.log(req.body);
       const user = await User.findOne({ username: username });
       if (!user) {
         req.flash("alertMessage", "User not found!");
@@ -45,6 +50,11 @@ module.exports = {
         res.redirect("/admin/signin");
       }
 
+      req.session.user = {
+        id: user.id,
+        username: user.username,
+      };
+
       res.redirect("/admin/dashboard");
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -53,14 +63,26 @@ module.exports = {
     }
   },
 
-  // Dashboard
-  viewDashboard: (req, res) => {
-    res.render("admin/dashboard/view_dashboard", {
-      title: "Staycation | Dashboard",
-    });
+  actionLogout: (req, res) => {
+    req.session.destroy();
+    res.redirect("/admin/signin");
   },
 
-  // Bank
+  // Dashboard
+  viewDashboard: (req, res) => {
+    try {
+      res.render("admin/dashboard/view_dashboard", {
+        title: "Staycation | Dashboard",
+        user: req.session.user,
+      });
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/signin");
+    }
+  },
+
+  // Start Bank
   viewBank: async (req, res) => {
     try {
       const bank = await Bank.find();
@@ -71,6 +93,7 @@ module.exports = {
         title: "Staycation | Bank",
         alert,
         bank,
+        user: req.session.user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -143,12 +166,18 @@ module.exports = {
       res.redirect("/admin/bank");
     }
   },
+  // END Bank
 
-  // Booking
+  // START Booking
   viewBooking: async (req, res) => {
     try {
+      const booking = await Booking.find()
+        .populate("memberId")
+        .populate("bankId");
       res.render("admin/booking/view_booking", {
         title: "Staycation | Booking",
+        user: req.session.user,
+        booking,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -157,7 +186,65 @@ module.exports = {
     }
   },
 
-  // Category
+  showBookingDetail: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
+
+      const booking = await Booking.findOne({ _id: id })
+        .populate("memberId")
+        .populate("bankId");
+
+      res.render("admin/booking/show_booking_detail", {
+        title: "Staycation | Booking Detail",
+        user: req.session.user,
+        booking,
+        alert,
+      });
+    } catch (error) {
+      res.redirect("/admin/booking");
+    }
+  },
+
+  actionConfirm: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const booking = await Booking.findOne({ _id: id });
+
+      booking.payments.status = "Accept";
+      await booking.save();
+
+      req.flash("alertMessage", "Success Comfirm Payment");
+      req.flash("alertStatus", "success");
+      res.redirect(`/admin/booking/${id}`);
+    } catch (error) {
+      res.redirect(`/admin/booking/${id}`);
+    }
+  },
+
+  actionReject: async (req, res) => {
+    const { id } = req.params;
+    try {
+      const booking = await Booking.findOne({ _id: id });
+
+      booking.payments.status = "Reject";
+      await booking.save();
+
+      req.flash("alertMessage", "Success Comfirm Payment");
+      req.flash("alertStatus", "success");
+      res.redirect(`/admin/booking/${id}`);
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect(`/admin/booking/${id}`);
+    }
+  },
+
+  // END Booking
+
+  // START Category
   viewCategory: async (req, res) => {
     try {
       const category = await Category.find();
@@ -168,6 +255,7 @@ module.exports = {
         category,
         alert,
         title: "Staycation | Category",
+        user: req.session.user,
       });
     } catch (error) {
       res.redirect("/admin/category");
@@ -238,6 +326,7 @@ module.exports = {
         alert,
         item,
         action: "view",
+        user: req.session.user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -299,6 +388,7 @@ module.exports = {
         alert,
         item,
         action: "show image",
+        user: req.session.user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -324,6 +414,7 @@ module.exports = {
         item,
         category,
         action: "edit",
+        user: req.session.user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -419,6 +510,7 @@ module.exports = {
         itemId,
         feature,
         activity,
+        user: req.session.user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);

@@ -21,6 +21,7 @@ var usersRouter = require("./routes/users");
 
 // Router Admin
 const adminRouter = require("./routes/admin");
+const apiRouter = require("./routes/api");
 
 var app = express();
 
@@ -33,7 +34,7 @@ app.use(
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: false,
-    cookie: { sameSite: 'strict' },
+    cookie: { sameSite: "strict" },
   })
 );
 app.use(flash());
@@ -48,6 +49,8 @@ app.use(
 );
 // Admin
 app.use("/admin", adminRouter);
+
+app.use("/api/v1/member", apiRouter);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
