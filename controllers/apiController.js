@@ -1,10 +1,8 @@
 const Category = require("../models/Category");
 const Bank = require("../models/Bank");
 const Item = require("../models/Item");
-const Feature = require("../models/Feature");
 const Treasure = require("../models/Activity");
-const Image = require("../models/Image");
-const User = require("../models/User");
+const Member = require("../models/Member");
 const Traveler = require("../models/Booking");
 
 module.exports = {
@@ -36,13 +34,12 @@ module.exports = {
 
       const testimonial = {
         _id: "asd1293uasdads1",
-        imageUrl: "images/testimonial1.jpg",
+        imageUrl: "images/testimonial2.jpg",
         name: "Happy Family",
         rate: 4.25,
         content:
-          "What a great trip with my family and I should try again and again next time soon...",
-        familyName: "Angga",
-        familyOccupation: "UI Designer",
+          "Keren banget nyari penginapan disini, bagus-bagus.. Bisa ngilangin penat dari asap pabrik untuk sementara waktu",
+        familyOccupation: "Kerja Pabrikan",
       };
 
       for (let i = 0; i < category.length; i++) {
@@ -98,19 +95,96 @@ module.exports = {
         name: "Happy Family",
         rate: 4.25,
         content:
-          "What a great trip with my family and I should try again and again next time soon...",
-        familyName: "Angga",
-        familyOccupation: "UI Designer",
+          "Keren banget nyari penginapan disini, bagus-bagus.. Bisa ngilangin penat dari asap pabrik untuk sementara waktu",
+        familyOccupation: "Kerja Pabrikan",
       };
 
       res.status(200).json({
         ...item._doc,
         bank,
-        testimonial
+        testimonial,
       });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Internal Server Error!" });
     }
+  },
+
+  bookingPage: async (req, res) => {
+    const {
+      idItem,
+      duration,
+      // price,
+      bookingStartDate,
+      bookingEndDate,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      accountHolder,
+      bankFrom,
+    } = req.body;
+
+    if (!req.file) {
+      return res.status(404).json({ message: "Image not found!" });
+    }
+
+    if (
+      idItem === undefined ||
+      duration === undefined ||
+      // price === undefined ||
+      bookingStartDate === undefined ||
+      bookingEndDate === undefined ||
+      firstName === undefined ||
+      lastName === undefined ||
+      email === undefined ||
+      phoneNumber === undefined ||
+      accountHolder === undefined ||
+      bankFrom === undefined
+    ) {
+      res.status(404).json({ message: "Please fill all field!" });
+    }
+
+    const item = await Item.findOne({ _id: idItem });
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    item.sumBooking += 1;
+    await item.save();
+
+    let total = item.price * duration;
+    let tax = total * 0.1;
+    const invoice = Math.floor(1000000 + Math.random() * 9000000); // sengaja dibanyakin wakokokawoak
+    const member = await Member.create({
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+    });
+
+    const newBooking = {
+      invoice,
+      bookingStartDate,
+      bookingEndDate,
+      total: (total += tax),
+      itemId: {
+        _id: item.id,
+        title: item.title,
+        price: item.price,
+        duration: duration,
+      },
+
+      memberId: member.id,
+      payments: {
+        proofPayment: `images/${req.file.filename}`,
+        bankFrom: bankFrom,
+        accountHolder: accountHolder,
+      },
+    };
+
+    // Traveler is Bank. Already as Traveler for Landing Page
+    const booking = await Traveler.create(newBooking);
+
+    res.status(201).json({ message: "Success Booking!" });
   },
 };

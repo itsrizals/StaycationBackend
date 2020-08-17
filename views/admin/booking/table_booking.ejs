@@ -13,10 +13,10 @@
         <thead>
           <tr>
             <th>No</th>
+            <th>Invoce</th>
             <th>Booking Date</th>
             <th>Title</th>
             <th>Member Name</th>
-            <th>Bank Name</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -26,6 +26,9 @@
           <tr>
             <td>
               <%= i +1 %>
+            </td>
+            <td>
+              #<%= booking[i].invoice %>
             </td>
             <td>
               <%= booking[i].bookingStartDate.toLocaleString().split(',')[0] %>
@@ -38,9 +41,7 @@
               <%= booking[i].memberId.firstName %> <%=
               booking[i].memberId.lastName %>
             </td>
-            <td>
-              <%= booking[i].bankId.bankName %>
-            </td>
+
             <td>
               <%= booking[i].payments.status %>
             </td>

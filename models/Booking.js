@@ -32,7 +32,6 @@ const bookingSchema = new mongoose.Schema({
       required: true,
     },
   },
-
   total: {
     type: Number,
     required: true,
@@ -63,7 +62,7 @@ const bookingSchema = new mongoose.Schema({
     },
     status: {
       type: String,
-      required: true,
+      default: 'Process',
     },
   },
 });
