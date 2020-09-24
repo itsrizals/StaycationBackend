@@ -1,9 +1,9 @@
-const Category = require("../models/Category");
-const Bank = require("../models/Bank");
-const Item = require("../models/Item");
-const Treasure = require("../models/Activity");
-const Member = require("../models/Member");
-const Traveler = require("../models/Booking");
+const Category = require('../models/Category');
+const Bank = require('../models/Bank');
+const Item = require('../models/Item');
+const Treasure = require('../models/Activity');
+const Member = require('../models/Member');
+const Traveler = require('../models/Booking');
 
 module.exports = {
   landingPage: async (req, res) => {
@@ -13,33 +13,33 @@ module.exports = {
       const city = await Item.find();
 
       const mostPicked = await Item.find()
-        .select("_id title country city price unit imageId")
+        .select('_id title country city price unit imageId')
         .limit(5)
-        .populate({ path: "imageId", select: "_id imageUrl" });
+        .populate({ path: 'imageId', select: '_id imageUrl' });
 
       const category = await Category.find()
-        .select("_id name")
+        .select('_id name')
         .limit(3)
         .populate({
-          path: "itemId",
-          select: "_id title country city isPopular imageId",
+          path: 'itemId',
+          select: '_id title country city isPopular imageId',
           perDocumentLimit: 4,
           option: { sort: { sumBooking: -1 } },
           populate: {
-            path: "imageId",
-            select: "_id imageUrl",
+            path: 'imageId',
+            select: '_id imageUrl',
             perDocumentLimit: 1,
           },
         });
 
       const testimonial = {
-        _id: "asd1293uasdads1",
-        imageUrl: "images/testimonial2.jpg",
-        name: "Happy Family",
+        _id: 'asd1293uasdads1',
+        imageUrl: 'images/testimonial2.jpg',
+        name: 'Happy Family',
         rate: 4.25,
         content:
-          "Keren banget nyari penginapan disini, bagus-bagus.. Bisa ngilangin penat dari asap pabrik untuk sementara waktu",
-        familyOccupation: "Kerja Pabrikan",
+          'Keren banget nyari penginapan disini, bagus-bagus.. Bisa ngilangin penat dari asap pabrik untuk sementara waktu',
+        familyOccupation: 'Kerja Pabrikan',
       };
 
       for (let i = 0; i < category.length; i++) {
@@ -67,7 +67,7 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Internal Server Error!" });
+      res.status(500).json({ message: 'Internal Server Error!' });
     }
   },
 
@@ -77,26 +77,26 @@ module.exports = {
       const bank = await Bank.find();
       const item = await Item.findOne({ _id: id })
         .populate({
-          path: "imageId",
-          select: "_id imageUrl",
+          path: 'imageId',
+          select: '_id imageUrl',
         })
         .populate({
-          path: "featureId",
-          select: "_id name qty imageUrl",
+          path: 'featureId',
+          select: '_id name qty imageUrl',
         })
         .populate({
-          path: "activityId",
-          select: "_id name type imageUrl",
+          path: 'activityId',
+          select: '_id name type imageUrl',
         });
 
       const testimonial = {
-        _id: "asd1293uasdads1",
-        imageUrl: "images/testimonial2.jpg",
-        name: "Happy Family",
+        _id: 'asd1293uasdads1',
+        imageUrl: 'images/testimonial2.jpg',
+        name: 'Happy Family',
         rate: 4.25,
         content:
-          "Keren banget nyari penginapan disini, bagus-bagus.. Bisa ngilangin penat dari asap pabrik untuk sementara waktu",
-        familyOccupation: "Kerja Pabrikan",
+          'Keren banget nyari penginapan disini, bagus-bagus.. Bisa ngilangin penat dari asap pabrik untuk sementara waktu',
+        familyOccupation: 'Kerja Pabrikan',
       };
 
       res.status(200).json({
@@ -106,7 +106,7 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Internal Server Error!" });
+      res.status(500).json({ message: 'Internal Server Error!' });
     }
   },
 
@@ -126,7 +126,7 @@ module.exports = {
     } = req.body;
 
     if (!req.file) {
-      return res.status(404).json({ message: "Image not found!" });
+      return res.status(404).json({ message: 'Image not found!' });
     }
 
     if (
@@ -142,12 +142,12 @@ module.exports = {
       accountHolder === undefined ||
       bankFrom === undefined
     ) {
-      res.status(404).json({ message: "Please fill all field!" });
+      res.status(404).json({ message: 'Please fill all field!' });
     }
 
     const item = await Item.findOne({ _id: idItem });
     if (!item) {
-      return res.status(404).json({ message: "Item not found" });
+      return res.status(404).json({ message: 'Item not found' });
     }
     item.sumBooking += 1;
     await item.save();
@@ -185,6 +185,6 @@ module.exports = {
     // Traveler is Bank. Already as Traveler for Landing Page
     const booking = await Traveler.create(newBooking);
 
-    res.status(201).json({ message: "Success Booking!" });
+    res.status(201).json({ message: 'Success Booking!' });
   },
 };

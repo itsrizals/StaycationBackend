@@ -1,11 +1,11 @@
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 // import uuid from "uuid/v4";
 
 const storageMultiple = multer.diskStorage({
   destination: function (req, file, cb) {
-    var dir = "public/images";
+    var dir = 'public/images';
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
@@ -22,11 +22,11 @@ const uploadMultiple = multer({
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
-}).array("image", 12);
+}).array('image', 12);
 
 // Set storage engine
 const storage = multer.diskStorage({
-  destination: "public/images",
+  destination: 'public/images',
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
   },
@@ -38,7 +38,7 @@ const upload = multer({
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
-}).single("image");
+}).single('image');
 
 // // Check file Type
 function checkFileType(file, cb) {
@@ -52,7 +52,7 @@ function checkFileType(file, cb) {
   if (mimeType && extName) {
     return cb(null, true);
   } else {
-    cb("Error: Images Only !!!");
+    cb('Error: Images Only !!!');
   }
 }
 

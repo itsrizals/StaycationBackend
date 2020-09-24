@@ -1,9 +1,8 @@
 const Bank = require('../models/Bank');
-const fs = require("fs-extra");
-const path = require("path");
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
-  // Start Bank
   viewBank: async (req, res) => {
     try {
       const bank = await Bank.find();
@@ -87,5 +86,4 @@ module.exports = {
       res.redirect('/admin/bank');
     }
   },
-  // END Bank
 };

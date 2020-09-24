@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema;
 const featureSchema = new mongoose.Schema({
   name: {
@@ -16,9 +16,9 @@ const featureSchema = new mongoose.Schema({
   itemId: [
     {
       type: ObjectId,
-      ref: "Item",
+      ref: 'Item',
     },
   ],
 });
 
-module.exports = mongoose.model("Feature", featureSchema);
+module.exports = mongoose.model('Feature', featureSchema);

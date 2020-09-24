@@ -1,7 +1,6 @@
 const Booking = require('../models/Booking');
 
 module.exports = {
-  // START Booking
   viewBooking: async (req, res) => {
     try {
       const booking = await Booking.find()

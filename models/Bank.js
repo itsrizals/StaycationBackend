@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const bankSchema = new mongoose.Schema({
   bankName: {
     type: String,
@@ -18,4 +18,4 @@ const bankSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Bank", bankSchema);
+module.exports = mongoose.model('Bank', bankSchema);
